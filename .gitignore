@@ -2,3 +2,4 @@ server/.env
 server/node_modules/
 server/firebaseConfig.ts
 server/serviceAccountKey.json
+node_modules/
