@@ -10,6 +10,7 @@ import {
 import { Href, Link, useNavigation } from "expo-router";
 import Navbar from "../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -26,7 +27,13 @@ export default function Login() {
     <SafeAreaView style={styles.container}>
       <Navbar onMenuPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
 
-      <View style={styles.content}>
+      <KeyboardAwareScrollView 
+          contentContainerStyle={[styles.scrollContent]}
+          enableOnAndroid={true}
+          enableAutomaticScroll={true}
+          extraScrollHeight={50}
+          extraHeight={150}
+          keyboardShouldPersistTaps="never">
         <Text style={styles.title}>Welcome Back</Text>
         <Text style={styles.subtitle}>Login to your KryptoNotes account</Text>
 
@@ -61,7 +68,7 @@ export default function Login() {
             </TouchableOpacity>
           </Link>
         </View>
-      </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -70,6 +77,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#0D1117", 
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: 24,
+    alignSelf: "center",
+    width: "100%",
   },
   content: {
     flex: 1,

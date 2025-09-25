@@ -1,76 +1,124 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
   SafeAreaView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Href, Link, useNavigation } from "expo-router";
 import Navbar from "../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const navigation = useNavigation();
 
-  const handleLogin = () => {
+  const handleRegister = () => {
     // TODO: Hook up authentication logic here
-    console.log("Logging in with:", email, password);
+    console.log("Creating account", email, password);
   };
+
+  const passwordsMatch = password && confirmPassword && password === confirmPassword;
+
+
+  const checkPasswordStrength = (pass : string) => {
+    let passwordStrength = 0;
+    if(pass.length >= 8) {
+      passwordStrength++;
+    }
+    if(/[A-Z]/.test(pass)) {
+      passwordStrength++;
+    }
+    if(/[0-9]/.test(pass)) {
+      passwordStrength++;
+    }
+    if(/[a-z]+/.test(pass)) {
+      passwordStrength++;
+    }
+    if(/[$@#&!]+/.test(pass)) {
+      passwordStrength++;
+    }
+    return passwordStrength;
+  }
+
+  const strength = checkPasswordStrength(password);
 
   return (
     <SafeAreaView style={styles.container}>
       <Navbar onMenuPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
+      <KeyboardAwareScrollView
+          contentContainerStyle={[styles.scrollContent]}
+          enableOnAndroid={true}
+          enableAutomaticScroll={true}
+          extraScrollHeight={50}
+          extraHeight={150}
+          keyboardShouldPersistTaps="never"
+        >
+            <Text style={styles.title}>Welcome to KryptoNotes!</Text>
+            <Text style={styles.subtitle}>Create your secure account</Text>
 
-      <View style={styles.content}>
-        <Text style={styles.title}>Welcome to KryptoNotes!</Text>
-        <Text style={styles.subtitle}>Create your secure account</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#9CA3AF"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#9CA3AF"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#9CA3AF"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              placeholderTextColor="#9CA3AF"
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secureTextEntry
+            />
+            {password.length > 0 && (
+              <Text style={strength >= 5 ? styles.matchText : strength >= 3 ? styles.mediumText : styles.mismatchText}>
+                Password Strength: {strength >= 5 ? "Strong 💪" : strength >= 3 ? "Weak 🙅‍♀️" : "Very Weak 👎"}
+              </Text>
+            )}
+            {confirmPassword.length > 0 && (
+              <Text style={passwordsMatch ? styles.matchText : styles.mismatchText}>
+                {passwordsMatch ? "Passwords match ✅" : "Passwords do not match ❌"}
+              </Text>
+            )}
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#9CA3AF"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          placeholderTextColor="#9CA3AF"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Create Account</Text>
-        </TouchableOpacity>
-
-        <View style={styles.footer}>
-          <Text style={{ color: "#F5F7FA" }}>Have an account?</Text>
-          <Link href={"/Login" as Href} asChild>
-            <TouchableOpacity>
-              <Text style={styles.registerText}> Login</Text>
+            <TouchableOpacity style={styles.button} onPress={handleRegister}>
+              <Text style={styles.buttonText}>Create Account</Text>
             </TouchableOpacity>
-          </Link>
-        </View>
-      </View>
+
+            <View style={styles.footer}>
+              <Text style={{ color: "#F5F7FA" }}>Have an account?</Text>
+              <Link href={"/Login" as Href} asChild>
+                <TouchableOpacity>
+                  <Text style={styles.registerText}> Login</Text>
+                </TouchableOpacity>
+              </Link>
+            </View>
+          </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
@@ -79,6 +127,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#0D1117", 
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: 24,
+    alignSelf: "center",
+    width: "100%",
   },
   content: {
     flex: 1,
@@ -105,6 +160,21 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 16,
     fontSize: 16,
+  },
+  matchText: {
+    color: "#22c55e",
+    marginBottom: 16,
+    textAlign: "left",
+  },
+  mismatchText: {
+    color: "#ef4444",
+    marginBottom: 16,
+    textAlign: "left",
+  },
+  mediumText: {
+    color: "#c5aa22ff",
+    marginBottom: 16,
+    textAlign: "left",
   },
   button: {
     backgroundColor: "#1F6FEB",
