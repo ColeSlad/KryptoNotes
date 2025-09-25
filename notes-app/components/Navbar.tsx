@@ -19,7 +19,6 @@ export default function Navbar({ onMenuPress }: { onMenuPress: () => void }) {
         paddingHorizontal: 20,
       }}
     >
-      {/* Hamburger menu */}
       <TouchableOpacity onPress={onMenuPress}>
         <Ionicons name="menu" size={28} color={colors.primary} />
       </TouchableOpacity>
