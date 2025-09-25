@@ -5,17 +5,17 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   SafeAreaView,
-  Keyboard,
-  TouchableWithoutFeedback,
+  Alert,
 } from "react-native";
 import { Href, Link, useNavigation } from "expo-router";
 import Navbar from "../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebaseConfig";
+import { hashPassword } from "@/utils/hashPassword";
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -24,9 +24,27 @@ export default function Register() {
 
   const navigation = useNavigation();
 
-  const handleRegister = () => {
-    // TODO: Hook up authentication logic here
-    console.log("Creating account", email, password);
+  const handleRegister = async (email: string, password: string) => {
+    if (!email || !password) {
+      Alert.alert("Email and password are required.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert("Passwords do not match.");
+      return;
+    }
+    if (password.length < 8 || password.length > 64) {
+      Alert.alert("Password must be between 8 and 64 characters.");
+      return;
+    }
+    try {
+        const hashedPassword = await hashPassword(password);
+        await createUserWithEmailAndPassword(auth, email, hashedPassword);
+        console.log("Registering with:", email, hashedPassword); 
+    }
+    catch (error) {
+        Alert.alert("Registration error:", (error as Error).message);
+    }
   };
 
   const passwordsMatch = password && confirmPassword && password === confirmPassword;
@@ -106,7 +124,7 @@ export default function Register() {
               </Text>
             )}
 
-            <TouchableOpacity style={styles.button} onPress={handleRegister}>
+            <TouchableOpacity style={styles.button} onPress={() => handleRegister(email, password)}>
               <Text style={styles.buttonText}>Create Account</Text>
             </TouchableOpacity>
 

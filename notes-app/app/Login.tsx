@@ -12,6 +12,10 @@ import Navbar from "../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebaseConfig";
+import { hashPassword } from "../utils/hashPassword";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
