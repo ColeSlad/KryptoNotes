@@ -1,4 +1,4 @@
-.env
-node_modules/
-firebaseConfig.ts
-serviceAccountKey.json
+server/.env
+server/node_modules/
+server/firebaseConfig.ts
+server/serviceAccountKey.json
