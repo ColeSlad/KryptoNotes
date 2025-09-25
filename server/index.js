@@ -9,7 +9,7 @@ const axios = require("axios");
 const admin = require("firebase-admin");
 const path = require("path");
 
-// Init Firebase Admin
+// firebase admin init
 const serviceAccountPath = process.env.SERVICE_ACCOUNT_PATH || "./serviceAccountKey.json";
 const serviceAccount = require(path.resolve(serviceAccountPath));
 
@@ -28,16 +28,15 @@ app.use(helmet());
 app.use(express.json());
 app.use(morgan("combined"));
 
-// CORS - restrict in production
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || true, // set to exact origin in production
+  origin: process.env.CORS_ORIGIN || true,
 };
 app.use(cors(corsOptions));
 
-// Rate limiter (adjust as appropriate)
+// Rate limiter
 const limiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 60, // limit each IP to 60 requests per windowMs
+  windowMs: 1 * 60 * 1000,
+  max: 60, 
 });
 app.use(limiter);
 
@@ -45,7 +44,6 @@ app.use(limiter);
 const firebaseSignInUrl = (apiKey) =>
   `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
 
-// --- Register endpoint ---
 // Creates a user with firebase-admin, then signs them in via REST to return tokens
 app.post(
   "/register",
@@ -62,18 +60,12 @@ app.post(
 
       const { email, password } = req.body;
 
-      // Server-side password policy: you can extend checks here
-      // Create user with admin SDK
       const userRecord = await admin.auth().createUser({
         email,
         password,
         emailVerified: false,
       });
 
-      // Optionally add custom claims or user profile setup here
-      // await admin.auth().setCustomUserClaims(userRecord.uid, { accountType: "standard" });
-
-      // Sign the user in via REST to give client an idToken/refreshToken
       const signInResp = await axios.post(firebaseSignInUrl(FIREBASE_API_KEY), {
         email,
         password,
@@ -91,15 +83,13 @@ app.post(
       });
     } catch (err) {
       console.error("Register error:", err.response?.data || err.message || err);
-      // Handle Firebase errors more carefully in production
+
       const message = err.response?.data?.error?.message || err.message || "Server error";
       return res.status(500).json({ error: message });
     }
   }
 );
 
-// --- Login endpoint ---
-// Uses Firebase REST API to authenticate with email+password and returns tokens
 app.post(
   "/login",
   [
@@ -132,8 +122,6 @@ app.post(
   }
 );
 
-// --- Verify endpoint ---
-// Verifies idToken via admin SDK
 app.post("/verify", async (req, res) => {
   try {
     const authHeader = req.headers.authorization || "";
@@ -150,7 +138,6 @@ app.post("/verify", async (req, res) => {
   }
 });
 
-// Basic health-check
 app.get("/health", (req, res) => res.send({ status: "ok" }));
 
 const port = process.env.PORT || 4000;

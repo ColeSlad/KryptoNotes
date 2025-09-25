@@ -13,7 +13,7 @@ import Navbar from "../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { hashPassword } from "@/utils/hashPassword";
 

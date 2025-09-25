@@ -1,6 +1,5 @@
-// utils/hashPassword.ts
 export async function hashPassword(password: string): Promise<string> {
-  // Dynamically import to avoid bundling on screens that don’t need it
+
   const argon2 = await import("argon2-browser");
 
   const hash = await argon2.hash({
