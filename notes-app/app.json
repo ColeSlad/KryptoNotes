@@ -38,6 +38,12 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow KryptoNotes to use Face ID."
+        }
       ]
     ],
     "experiments": {
