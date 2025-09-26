@@ -8,8 +8,8 @@ import {
   SafeAreaView,
   Alert,
 } from "react-native";
-import { Href, Link, useNavigation } from "expo-router";
-import Navbar from "../components/Navbar";
+import { Href, Link, useNavigation, useRouter } from "expo-router";
+import Navbar from "../../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -23,6 +23,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const navigation = useNavigation();
+  const router = useRouter();
 
   const handleRegister = async (email: string, password: string) => {
     if (!email || !password) {
@@ -40,7 +41,8 @@ export default function Register() {
 
     try {
         await register(email, password);
-        // navigate wherever
+        alert("Account created! Please log in.");
+        router.push("/public/Login");
     }
     catch (error: any) {
         if (error.code === "auth/email-already-in-use") {

@@ -14,6 +14,7 @@ export default function Layout() {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
       setLoading(false);
+      console.log("Auth state changed. User:", firebaseUser ? firebaseUser.email : "None");
     });
     return unsubscribe;
   }, []);
@@ -47,37 +48,85 @@ export default function Layout() {
           name="index"
           options={{
             title: "Home",
+            
           }}
         />
-        {user && (
-          <>
-            <Drawer.Screen
-            name="notes"
-            options={{
-              drawerLabel: "Notes",
-            }}
-            />
-            <Drawer.Screen
-            name="settings"
-            options={{
-              drawerLabel: "Settings",
-            }}
-        />
-          </>
-          
-        )}
         <Drawer.Screen
-          name="login"
-          options={{
-            drawerLabel: "Login",
-          }}
+          name="(public)"
+          options={{ drawerItemStyle: { display: "none" } }}
         />
-         <Drawer.Screen
-          name="register"
-          options={{
-            drawerLabel: "Register",
-          }}
+        <Drawer.Screen
+          name="(protected)"
+          options={{ drawerItemStyle: { display: "none" } }}
         />
+        <Drawer.Screen
+          name="Note"
+          options={{ drawerItemStyle: { display: "none" } }}
+        />
+
+        {/* I know the following code sucks, but I've tried to use fragments to bring everything 
+        together but it won't work so I got fed up and this is what I'm working with. I'll fix it later*/}
+        {user ? 
+        (
+            <Drawer.Screen
+              name="public/Login"
+              options={{ title: "Login", drawerItemStyle: { display: "none"} }}
+            />
+          
+        ) : 
+        (
+            <Drawer.Screen
+              name="public/Login"
+              options={{ title: "Login"}}
+            />
+        )
+        }
+        {user ? 
+        (
+            <Drawer.Screen
+              name="public/Register"
+              options={{ title: "Register", drawerItemStyle: { display: "none"} }}
+            />
+          
+        ) : 
+        (
+            <Drawer.Screen
+              name="public/Register"
+              options={{ title: "Register"}}
+            />
+        )
+        }
+        {user ? 
+        (
+            <Drawer.Screen
+              name="protected/Notes"
+              options={{ title: "Notes"}}
+            />
+          
+        ) : 
+        (
+            <Drawer.Screen
+              name="protected/Notes"
+              options={{ title: "Notes", drawerItemStyle: { display: "none"} }}
+            />
+        )
+        }
+        {user ? 
+        (
+            <Drawer.Screen
+              name="protected/Settings"
+              options={{ title: "Settings"}}
+            />
+          
+        ) : 
+        (
+            <Drawer.Screen
+              name="protected/Settings"
+              options={{ title: "Settings", drawerItemStyle: { display: "none"} }}
+            />
+        )
+        }
+        
       </Drawer>
     </GestureHandlerRootView>
   );

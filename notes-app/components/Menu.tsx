@@ -5,7 +5,7 @@ import { Text, TouchableOpacity } from "react-native";
 
 export default function Menu(props: any) {
   return (
-    <DrawerContentScrollView {...props}>
+    {/*<DrawerContentScrollView {...props}>
       <Link href="/" asChild>
         <TouchableOpacity style={{ padding: 16 }}>
           <Text style={{ fontSize: 16 }}>Home</Text>
@@ -23,6 +23,7 @@ export default function Menu(props: any) {
           <Text style={{ fontSize: 16 }}>Register</Text>
         </TouchableOpacity>
       </Link>
-    </DrawerContentScrollView>
+    </DrawerContentScrollView> */}
+    
   );
 }
