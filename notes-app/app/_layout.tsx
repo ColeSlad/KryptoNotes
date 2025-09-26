@@ -1,8 +1,31 @@
 import { Drawer } from "expo-router/drawer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { StyleSheet } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import "react-native-get-random-values";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/utils/firebaseConfig";
 
 export default function Layout() {
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+      setLoading(false);
+    });
+    return unsubscribe;
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
@@ -26,6 +49,23 @@ export default function Layout() {
             title: "Home",
           }}
         />
+        {user && (
+          <>
+            <Drawer.Screen
+            name="notes"
+            options={{
+              drawerLabel: "Notes",
+            }}
+            />
+            <Drawer.Screen
+            name="settings"
+            options={{
+              drawerLabel: "Settings",
+            }}
+        />
+          </>
+          
+        )}
         <Drawer.Screen
           name="login"
           options={{

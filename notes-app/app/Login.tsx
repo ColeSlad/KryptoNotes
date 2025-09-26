@@ -7,25 +7,34 @@ import {
   StyleSheet,
   SafeAreaView,
 } from "react-native";
-import { Href, Link, useNavigation } from "expo-router";
+import { Href, Link, useNavigation, useRouter } from "expo-router";
 import Navbar from "../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
-import { hashPassword } from "../utils/hashPassword";
+import { login } from "@/auth/login";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigation = useNavigation();
+  const router = useRouter();
 
-  const handleLogin = () => {
-    // TODO: Hook up authentication logic here
-    console.log("Logging in with:", email, password);
-  };
+  const handleLogin = async () => {
+    try {
+      await login(email, password);
+      router.push("/");
+    } catch (error: any) {
+      if (error.code === "auth/user-not-found") {
+        alert("No user found with this email. Please register first.");
+      } else if (error.code === "auth/invalid-credential" || error.code === "auth/wrong-password") {
+        alert("Incorrect password. Please try again.");
+      } else {
+        alert("Login error: " + error.message);
+      }
+    };
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -136,4 +145,4 @@ const styles = StyleSheet.create({
     color: "#1a60c9ff",
     fontWeight: "600",
   },
-});
+})

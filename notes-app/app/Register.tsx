@@ -13,11 +13,11 @@ import Navbar from "../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
-import { hashPassword } from "@/utils/hashPassword";
+import { register } from "@/auth/register";
 
 export default function Register() {
+  global.Buffer = require('buffer').Buffer;
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -37,15 +37,28 @@ export default function Register() {
       Alert.alert("Password must be between 8 and 64 characters.");
       return;
     }
+
     try {
-        const hashedPassword = await hashPassword(password);
-        await createUserWithEmailAndPassword(auth, email, hashedPassword);
-        console.log("Registering with:", email, hashedPassword); 
+        await register(email, password);
+        // navigate wherever
     }
-    catch (error) {
-        Alert.alert("Registration error:", (error as Error).message);
+    catch (error: any) {
+        if (error.code === "auth/email-already-in-use") {
+          Alert.alert("Email already in use. Please login or use a different email.");
+        } else {
+          Alert.alert("Registration error: " + error.message);
+        }
+        return;
     }
   };
+
+  /*
+  function generateSalt(length = 16): string {
+    const array = new Uint8Array(length);
+    crypto.getRandomValues(array);
+    return Buffer.from(array).toString("hex"); 
+  }
+  */
 
   const passwordsMatch = password && confirmPassword && password === confirmPassword;
 

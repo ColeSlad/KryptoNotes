@@ -3,7 +3,7 @@ import { SafeAreaView, View, Text, StatusBar } from "react-native";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Navbar from "../components/Navbar";
-import "react-native-get-random-values";
+
 
 
 const colors = {
