@@ -1,140 +1,73 @@
-import { Drawer } from "expo-router/drawer";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import "react-native-get-random-values";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/utils/firebaseConfig";
+import { Stack } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '../utils/firebaseConfig';
+import { View, ActivityIndicator, StatusBar } from 'react-native';
+import Navbar from '../components/Navbar';
+import { useAppFonts } from '../utils/font';
+import * as SplashScreen from 'expo-splash-screen';
+import NewNavbar from '@/components/NewNavbar';
 
-export default function Layout() {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+// Splash screen visible while loading
+SplashScreen.preventAutoHideAsync();
+
+const colors = {
+  background: '#0D1117',
+  accent: '#1F6FEB',
+};
+
+export default function RootLayout() {
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+  const fontsLoaded = useAppFonts();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-      console.log("Auth state changed. User:", firebaseUser ? firebaseUser.email : "None");
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setAuthLoading(false);
     });
-    return unsubscribe;
+
+    return () => unsubscribe();
   }, []);
 
-  if (loading) {
+  useEffect(() => {
+    if (fontsLoaded && !authLoading) {
+      // Hide splash screen once loaded
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, authLoading]);
+
+  if (!fontsLoaded || authLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <ActivityIndicator size="large" color={colors.accent} />
       </View>
     );
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer
-        screenOptions={{
-          headerShown: false,
-          drawerStyle: {
-            backgroundColor: "#04041dff",
-          },
-          drawerLabelStyle: {
-            color: "#F5F7FA", 
-            fontSize: 16,
-            fontWeight: "500",
-          },
-          drawerActiveTintColor: "#4DA8DA", 
-          drawerInactiveTintColor: "#6B7A8F",
-        }}
-      >
-        <Drawer.Screen
-          name="index"
-          options={{
-            title: "Home",
-            
+    <>
+      <StatusBar barStyle="light-content" backgroundColor={colors.background} />
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <NewNavbar />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            contentStyle: { backgroundColor: colors.background },
+            animation: 'fade',
           }}
-        />
-        <Drawer.Screen
-          name="(public)"
-          options={{ drawerItemStyle: { display: "none" } }}
-        />
-        <Drawer.Screen
-          name="(protected)"
-          options={{ drawerItemStyle: { display: "none" } }}
-        />
-        <Drawer.Screen
-          name="Note"
-          options={{ drawerItemStyle: { display: "none" } }}
-        />
-
-        {/* I know the following code sucks, but I've tried to use fragments to bring everything 
-        together but it won't work so I got fed up and this is what I'm working with. I'll fix it later*/}
-        {user ? 
-        (
-            <Drawer.Screen
-              name="public/Login"
-              options={{ title: "Login", drawerItemStyle: { display: "none"} }}
-            />
-          
-        ) : 
-        (
-            <Drawer.Screen
-              name="public/Login"
-              options={{ title: "Login"}}
-            />
-        )
-        }
-        {user ? 
-        (
-            <Drawer.Screen
-              name="public/Register"
-              options={{ title: "Register", drawerItemStyle: { display: "none"} }}
-            />
-          
-        ) : 
-        (
-            <Drawer.Screen
-              name="public/Register"
-              options={{ title: "Register"}}
-            />
-        )
-        }
-        {user ? 
-        (
-            <Drawer.Screen
-              name="protected/Notes"
-              options={{ title: "Notes"}}
-            />
-          
-        ) : 
-        (
-            <Drawer.Screen
-              name="protected/Notes"
-              options={{ title: "Notes", drawerItemStyle: { display: "none"} }}
-            />
-        )
-        }
-        {user ? 
-        (
-            <Drawer.Screen
-              name="protected/Settings"
-              options={{ title: "Settings"}}
-            />
-          
-        ) : 
-        (
-            <Drawer.Screen
-              name="protected/Settings"
-              options={{ title: "Settings", drawerItemStyle: { display: "none"} }}
-            />
-        )
-        }
-        
-      </Drawer>
-    </GestureHandlerRootView>
+        >
+          <Stack.Screen name="index" />
+          <Stack.Screen name="Login" />
+          <Stack.Screen name="Register" />
+          <Stack.Screen 
+            name="(tabs)" 
+            options={{ 
+              headerShown: false,
+            }} 
+          />
+        </Stack>
+      </View>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#1A1A1D",
-  },
-});

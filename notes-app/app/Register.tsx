@@ -9,7 +9,7 @@ import {
   Alert,
 } from "react-native";
 import { Href, Link, useNavigation, useRouter } from "expo-router";
-import Navbar from "../../components/Navbar";
+import Navbar from "../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -42,7 +42,7 @@ export default function Register() {
     try {
         await register(email, password);
         alert("Account created! Please log in.");
-        router.push("/public/Login");
+        router.push("/Login");
     }
     catch (error: any) {
         if (error.code === "auth/email-already-in-use") {
@@ -89,7 +89,7 @@ export default function Register() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Navbar onMenuPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
+      {/*<Navbar onMenuPress={() => navigation.dispatch(DrawerActions.openDrawer())} /> */}
       <KeyboardAwareScrollView
           contentContainerStyle={[styles.scrollContent]}
           enableOnAndroid={true}

@@ -8,7 +8,7 @@ import {
   SafeAreaView,
 } from "react-native";
 import { Href, Link, useNavigation, useRouter } from "expo-router";
-import Navbar from "../../components/Navbar";
+import Navbar from "../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -39,7 +39,7 @@ export default function Login() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Navbar onMenuPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
+      {/*<Navbar onMenuPress={() => navigation.dispatch(DrawerActions.openDrawer())} />*/}
 
       <KeyboardAwareScrollView 
           contentContainerStyle={[styles.scrollContent]}
@@ -76,7 +76,7 @@ export default function Login() {
 
         <View style={styles.footer}>
           <Text style={{ color: "#F5F7FA" }}>Don’t have an account?</Text>
-          <Link href={"/public/Register" as Href} asChild>
+          <Link href={"/Register" as Href} asChild>
             <TouchableOpacity>
               <Text style={styles.registerText}> Register</Text>
             </TouchableOpacity>

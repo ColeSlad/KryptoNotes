@@ -1,14 +1,17 @@
-// app/settings.tsx
 import React, { useEffect, useState } from "react";
 import { View, Text, Button, StyleSheet, Alert } from "react-native";
 import { signOut, deleteUser, onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "@/utils/firebaseConfig";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
+import Navbar from "@/components/Navbar";
+import { DrawerActions } from "@react-navigation/native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
 
   const router = useRouter();
+  const navigation = useNavigation();
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       setUser(firebaseUser);
@@ -65,7 +68,9 @@ export default function Settings() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={{ backgroundColor: "#1E293B", flex: 1 }}>
+      <Navbar onMenuPress={() => navigation.dispatch(DrawerActions.openDrawer())} />
+      <View style={styles.container}>
       <Text style={styles.title}>Settings</Text>
       {user ? (
         <>
@@ -81,6 +86,8 @@ export default function Settings() {
         <Text style={{ marginTop: 20 }}>No user signed in</Text>
       )}
     </View>
+    </SafeAreaView>
+    
   );
 }
 
