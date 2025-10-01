@@ -72,7 +72,7 @@ const AnimatedLock: React.FC<{ isLocked: boolean }> = ({ isLocked }) => {
   );
 };
 
-export const NewNavbar: React.FC<NavbarProps> = ({ title = 'Krypto Notes' }) => {
+export const NewNavbar: React.FC<NavbarProps> = ({ title = 'KryptoNotes' }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLocked, setIsLocked] = useState(true);
   const buttonScale = useRef(new Animated.Value(1)).current;

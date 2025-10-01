@@ -1,5 +1,3 @@
-// src/types/routes.ts
-// Create a custom type for your app's specific routes
 export type AppRoute = 
   | '/'
   | '/login' 
@@ -8,5 +6,5 @@ export type AppRoute =
   | '/(tabs)/notes' 
   | '/(tabs)/settings'
   | '/(tabs)/notes/create'
-  | `/Note` // If you have a Note screen
+  | `/Note`
   | string; // Allow other routes

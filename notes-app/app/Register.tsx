@@ -12,6 +12,7 @@ import { Href, Link, useNavigation, useRouter } from "expo-router";
 import Navbar from "../components/Navbar";
 import { DrawerActions } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { Ionicons } from "@expo/vector-icons";
 
 import { register } from "@/auth/register";
 
@@ -21,6 +22,8 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigation = useNavigation();
   const router = useRouter();
@@ -42,7 +45,7 @@ export default function Register() {
     try {
         await register(email, password);
         alert("Account created! Please log in.");
-        router.push("/Login");
+        router.replace("/Login");
     }
     catch (error: any) {
         if (error.code === "auth/email-already-in-use") {
@@ -111,23 +114,47 @@ export default function Register() {
               autoCapitalize="none"
             />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Password"
-              placeholderTextColor="#9CA3AF"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-              
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="Confirm Password"
-              placeholderTextColor="#9CA3AF"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secureTextEntry
-            />
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Password"
+                placeholderTextColor="#9CA3AF"
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry={!showPassword}
+              />
+              <TouchableOpacity
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}
+              >
+                <Ionicons
+                  name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                  size={20}
+                  color="#8B949E"
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.passwordContainer}>
+              <TextInput
+                style={styles.passwordInput}
+                placeholder="Confirm Password"
+                placeholderTextColor="#9CA3AF"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                secureTextEntry={!showConfirmPassword}
+              />
+              <TouchableOpacity
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={styles.eyeIcon}
+              >
+                <Ionicons
+                  name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
+                  size={20}
+                  color="#8B949E"
+                />
+              </TouchableOpacity>
+            </View>
             {password.length > 0 && (
               <Text style={strength >= 5 ? styles.matchText : strength >= 3 ? styles.mediumText : styles.mismatchText}>
                 Password Strength: {strength >= 5 ? "Strong 💪" : strength >= 3 ? "Weak 🙅‍♀️" : "Very Weak 👎"}
@@ -193,6 +220,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 16,
     fontSize: 16,
+  },
+  passwordContainer: {
+    position: 'relative',
+    marginBottom: 16,
+  },
+  passwordInput: {
+    backgroundColor: "#2E2E33",
+    color: "#F5F7FA",
+    padding: 14,
+    paddingRight: 48,
+    borderRadius: 10,
+    fontSize: 16,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 14,
+    top: '50%',
+    transform: [{ translateY: -14 }],
+    padding: 4,
   },
   matchText: {
     color: "#22c55e",

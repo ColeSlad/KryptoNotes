@@ -17,7 +17,6 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../utils/firebaseConfig';
 import { Ionicons } from '@expo/vector-icons';
 
-// Design System Colors
 const colors = {
   background: '#0D1117',
   accent: '#1F6FEB',
@@ -35,10 +34,10 @@ interface MenuProps {
   onClose: () => void;
 }
 
-// Vault Ring Animation Component
 const VaultRing: React.FC<{ isAnimating: boolean }> = ({ isAnimating }) => {
   const rotation = useRef(new Animated.Value(0)).current;
 
+  /*
   useEffect(() => {
     if (isAnimating) {
       Animated.loop(
@@ -55,14 +54,14 @@ const VaultRing: React.FC<{ isAnimating: boolean }> = ({ isAnimating }) => {
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
   });
-
+  */
   return (
-    <Animated.View style={[styles.vaultRing, { transform: [{ rotate: spin }] }]}>
+    <Animated.View style={[styles.vaultRing, /*{ transform: [{ rotate: spin }] }*/]}>
       <View style={styles.vaultRingInner} />
-      <View style={styles.vaultRingDot} />
+      {/* <View style={styles.vaultRingDot} /> 
       <View style={[styles.vaultRingDot, { top: 'auto', bottom: -3 }]} />
       <View style={[styles.vaultRingDot, { left: -3, top: '50%' }]} />
-      <View style={[styles.vaultRingDot, { right: -3, left: 'auto', top: '50%' }]} />
+      <View style={[styles.vaultRingDot, { right: -3, left: 'auto', top: '50%' }]} />*/}
     </Animated.View>
   );
 };
@@ -72,7 +71,6 @@ export const HamburgerMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const router = useRouter();
   
-  // Initialize animations with stable values
   const slideAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -86,9 +84,7 @@ export const HamburgerMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     if (isOpen) {
-      // First show the modal
       setIsModalVisible(true);
-      // Then animate in
       Animated.parallel([
         Animated.timing(slideAnim, {
           toValue: 1,
@@ -102,7 +98,6 @@ export const HamburgerMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
         }),
       ]).start();
     } else {
-      // Animate out first
       Animated.parallel([
         Animated.timing(slideAnim, {
           toValue: 0,
@@ -115,13 +110,11 @@ export const HamburgerMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        // Then hide the modal after animation completes
         setIsModalVisible(false);
       });
     }
   }, [isOpen, slideAnim, fadeAnim]);
 
-  // Calculate the actual translation value
   const screenWidth = Dimensions.get('window').width;
   const menuWidth = screenWidth * 0.8;
   
@@ -149,7 +142,6 @@ export const HamburgerMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
     }
   };
 
-  // Menu items when user is not logged in
   const guestMenuItems = [
     { 
       label: 'HOME', 
@@ -171,25 +163,24 @@ export const HamburgerMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
     },
   ];
 
-  // Menu items when user is logged in
   const authenticatedMenuItems = [
     { 
-      label: 'HOME', 
-      route: '/(tabs)/Home', 
-      icon: 'shield-outline',
-      description: 'Dashboard'
+      label: 'DASHBOARD', 
+      route: '/(app)/Home', 
+      icon: 'analytics-outline',
+      description: 'Data and analytics'
     },
     { 
       label: 'NOTES', 
-      route: '/(tabs)/notes', 
+      route: '/(app)/notes', 
       icon: 'document-lock-outline',
-      description: 'Encrypted notes'
+      description: 'Access your notes'
     },
     { 
       label: 'SETTINGS', 
-      route: '/(tabs)/Settings', 
+      route: '/(app)/Settings', 
       icon: 'settings-outline',
-      description: 'Security settings'
+      description: 'All settings'
     },
   ];
 
@@ -226,7 +217,7 @@ export const HamburgerMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
                 <VaultRing isAnimating={isOpen} />
                 <Ionicons name="lock-closed" size={20} color={colors.accent} />
               </View>
-              <Text style={styles.menuTitle}>Krypto Notes</Text>
+              <Text style={styles.menuTitle}>KryptoNotes</Text>
               <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                 <Ionicons name="close" size={28} color={colors.textDim} />
               </TouchableOpacity>
@@ -242,13 +233,13 @@ export const HamburgerMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
               </View>
               {user ? (
                 <>
-                  <Text style={styles.userStatus}>AUTHENTICATED</Text>
+                  <Text style={styles.userStatus}>SIGNED IN AS:</Text>
                   <Text style={styles.userEmail}>{user.email}</Text>
                 </>
               ) : (
                 <>
-                  <Text style={styles.userStatus}>GUEST ACCESS</Text>
-                  <Text style={styles.userEmail}>Limited permissions</Text>
+                  <Text style={styles.userStatus}>NOT SIGNED IN</Text>
+                  <Text style={styles.userEmail}>Login or create an account</Text>
                 </>
               )}
             </View>
@@ -292,7 +283,7 @@ export const HamburgerMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
                     activeOpacity={0.8}
                   >
                     <Ionicons 
-                      name="lock-open-outline" 
+                      name="exit-outline" 
                       size={24} 
                       color="#fff"
                     />

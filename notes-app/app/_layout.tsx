@@ -1,14 +1,11 @@
 import { Stack } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '../utils/firebaseConfig';
-import { View, ActivityIndicator, StatusBar } from 'react-native';
-import Navbar from '../components/Navbar';
+import { useEffect } from 'react';
+import { View, StatusBar } from 'react-native';
+import { AuthProvider } from '../utils/authContext';
 import { useAppFonts } from '../utils/font';
 import * as SplashScreen from 'expo-splash-screen';
 import NewNavbar from '@/components/NewNavbar';
 
-// Splash screen visible while loading
 SplashScreen.preventAutoHideAsync();
 
 const colors = {
@@ -16,33 +13,17 @@ const colors = {
   accent: '#1F6FEB',
 };
 
-export default function RootLayout() {
-  const [user, setUser] = useState<User | null>(null);
-  const [authLoading, setAuthLoading] = useState(true);
+function RootLayoutNav() {
   const fontsLoaded = useAppFonts();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setAuthLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (fontsLoaded && !authLoading) {
-      // Hide splash screen once loaded
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, authLoading]);
+  }, [fontsLoaded]);
 
-  if (!fontsLoaded || authLoading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-        <ActivityIndicator size="large" color={colors.accent} />
-      </View>
-    );
+  if (!fontsLoaded) {
+    return null;
   }
 
   return (
@@ -55,19 +36,45 @@ export default function RootLayout() {
             headerShown: false,
             contentStyle: { backgroundColor: colors.background },
             animation: 'fade',
+            gestureEnabled: false,
+            fullScreenGestureEnabled: false,
           }}
         >
-          <Stack.Screen name="index" />
-          <Stack.Screen name="Login" />
-          <Stack.Screen name="Register" />
           <Stack.Screen 
-            name="(tabs)" 
+            name="index" 
+            options={{
+              gestureEnabled: false,
+            }}
+          />
+          <Stack.Screen 
+            name="Login" 
+            options={{
+              gestureEnabled: false,
+            }}
+          />
+          <Stack.Screen 
+            name="Register" 
+            options={{
+              gestureEnabled: false,
+            }}
+          />
+          <Stack.Screen 
+            name="(auth)" 
             options={{ 
               headerShown: false,
+              gestureEnabled: false,
             }} 
           />
         </Stack>
       </View>
     </>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
   );
 }
