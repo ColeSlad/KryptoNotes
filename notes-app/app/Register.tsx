@@ -63,7 +63,7 @@ export default function Register() {
     crypto.getRandomValues(array);
     return Buffer.from(array).toString("hex"); 
   }
-  */
+  */  
 
   const passwordsMatch = password && confirmPassword && password === confirmPassword;
 
