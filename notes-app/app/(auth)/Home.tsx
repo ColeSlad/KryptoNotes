@@ -252,7 +252,7 @@ export default function Home() {
         router.push('/(auth)/notes/Create');
         break;
       case 'notes':
-        router.push('/(auth)/notes/index');
+        router.push('/(auth)/notes');
         break;
       case 'settings':
         router.push('/(auth)/Settings');

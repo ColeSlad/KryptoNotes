@@ -95,7 +95,7 @@ export default function LandingPage() {
           <View style={styles.buttonContainer}>
             <TouchableOpacity 
               style={styles.primaryButton}
-              onPress={() => handleButtonPress('/(auth)/Notes')}
+              onPress={() => handleButtonPress('/(auth)/notes')}
               activeOpacity={0.8}
             >
               <Ionicons name="document-lock" size={20} color="#fff" />

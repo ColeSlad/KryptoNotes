@@ -166,19 +166,19 @@ export const HamburgerMenu: React.FC<MenuProps> = ({ isOpen, onClose }) => {
   const authenticatedMenuItems = [
     { 
       label: 'DASHBOARD', 
-      route: '/(app)/Home', 
+      route: '/(auth)/Home', 
       icon: 'analytics-outline',
       description: 'Data and analytics'
     },
     { 
       label: 'NOTES', 
-      route: '/(app)/notes', 
+      route: '/(auth)/notes', 
       icon: 'document-lock-outline',
       description: 'Access your notes'
     },
     { 
       label: 'SETTINGS', 
-      route: '/(app)/Settings', 
+      route: '/(auth)/Settings', 
       icon: 'settings-outline',
       description: 'All settings'
     },

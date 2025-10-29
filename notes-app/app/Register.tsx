@@ -61,7 +61,7 @@ export default function Register() {
   function generateSalt(length = 16): string {
     const array = new Uint8Array(length);
     crypto.getRandomValues(array);
-    return Buffer.from(array).toString("hex"); 
+    return Buffer.from(array).toString("hex");  
   }
   */  
 
